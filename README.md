@@ -63,5 +63,3 @@ python run_local_checks.py 02_spark_rdd 03_spark_dataframes_sql
 ```
 
 Le script exécute les cellules sur les fichiers existants avec deux threads locaux. Les résultats des mesures RDD dépendent du cache, de l’ordre des exécutions et de l’environnement.
-
-Voir [le rapport](docs/rapport-corrections.md) pour le périmètre réellement vérifié.
