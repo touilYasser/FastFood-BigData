@@ -1,0 +1,6 @@
+notebook==7.2.2
+kafka-python==2.0.2
+pandas==2.0.3
+numpy==1.24.4
+matplotlib==3.7.5
+boto3==1.35.54

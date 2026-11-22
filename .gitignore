@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets
+.env
+
+# Generated data
+data/orders_history.jsonl
+
+# Local storage
+minio_data/
+kafka_data/
+checkpoints/
+silver/
+.compose-validation.json
+spark-warehouse/
+metastore_db/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
