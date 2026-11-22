@@ -33,7 +33,15 @@ Ouvrir [Jupyter](http://localhost:8888/?token=fastfood) et exécuter les noteboo
 | `03_spark_dataframes_sql` | KPI DataFrame et SQL, jointure, UDF et expression native, plan Catalyst et écriture Parquet partitionnée dans Silver |
 | `04_graphframes` | Graphe clients–restaurants depuis Silver, degrés, PageRank, composantes connexes, motifs et CA avec `aggregateMessages` |
 
-Exécuter la partie 3 avant la partie 4 pour créer `s3a://lake/silver/orders_history/`. Pour les preuves des parties 2 et 3, consulter les onglets Jobs et Stages de Spark UI sur le port 4040 pendant l’exécution. En ligne de commande, définir `FASTFOOD_UI_HOLD_SECONDS=120` dans le processus du notebook pour garder l’interface disponible deux minutes en fin de calcul.
+Exécuter la partie 3 avant la partie 4 pour créer `s3a://lake/silver/orders_history/`. Pour suivre les parties 2 et 3, ouvrir [Spark UI](http://localhost:4040) pendant l’exécution. Dans l’onglet Jobs, cliquer sur un job, puis sur DAG Visualization. L’onglet Stages affiche les tâches et les volumes de shuffle. Pour garder l’interface ouverte deux minutes en fin de calcul, mettre `FASTFOOD_UI_HOLD_SECONDS=120` dans `.env` avant `docker compose up -d`. Dans Jupyter, on peut aussi avancer cellule par cellule et observer l’interface avant l’appel à `spark.stop()`.
+
+### Vérifier les services et les données
+
+- [Spark Master](http://localhost:8080) affiche deux workers `ALIVE`.
+- [MinIO](http://localhost:9001) utilise par défaut le compte `minioadmin` et le mot de passe `minioadmin123`. Dans `lake`, ouvrir `bronze/history/` après le chargement, puis `silver/orders_history/` après la partie 3. Silver comporte quatre répertoires `city=…`.
+- Pour vérifier les trois partitions de Kafka, lancer `docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:29092 --describe --topic orders`.
+
+Si des ports sont déjà occupés, personnaliser les ports hôte dans `.env`. Par exemple, `MINIO_API_PORT=19000` et `MINIO_CONSOLE_PORT=19001` déplacent MinIO vers les ports 19000 et 19001. Pour un second cluster complet, utiliser un autre nom de projet (`docker compose -p fastfood-demo …`) et des ports hôte distincts pour chaque service. Les connexions entre conteneurs restent sur les ports d’origine.
 
 Démarrer chaque notebook avec un noyau neuf. Les JAR Hadoop AWS et GraphFrames sont résolus au premier lancement qui en a besoin. Le cache Ivy est conservé dans un volume. En cas de blocage au démarrage de Spark, identifier le dépôt ou l’artefact indiqué dans les logs Ivy avant de relancer. GraphFrames 0.8.3 est configuré pour Spark 3.5 et Scala 2.12.
 
