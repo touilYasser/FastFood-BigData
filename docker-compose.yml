@@ -232,8 +232,14 @@ services:
       - --ServerApp.root_dir=/opt/project
 
     ports:
-      - "127.0.0.1:${JUPYTER_PORT:-8888}:8888"
+      - "127.0.0.1:${JUPYTER_PORT:-0}:8888"
       - "127.0.0.1:${SPARK_APP_UI_PORT:-4040}:4040"
+
+    healthcheck:
+      test: ["CMD", "python3", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8888/login', timeout=3).close()"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
 
     volumes:
       - ./:/opt/project

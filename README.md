@@ -13,7 +13,7 @@ Depuis la racine du projet, avec le moteur Docker Linux démarré :
 ```powershell
 docker compose config --quiet
 docker compose build spark-master
-docker compose up -d
+docker compose up -d --wait --wait-timeout 120
 docker compose ps -a
 docker compose exec jupyter python3 /opt/project/producer/producer.py --mode file --n 50000
 docker compose exec jupyter python3 -m src.upload_data
@@ -23,7 +23,17 @@ Le build explicite crée l’image partagée avant que les workers et les servic
 
 Depuis un clone Git, la commande `--mode file` génère l’historique de 50 000 événements. Elle réécrit aussi le fichier des restaurants. Si les deux fichiers sont déjà présents et doivent être conservés, passer directement au chargement MinIO.
 
-Ouvrir [Jupyter](http://localhost:8888/?token=fastfood) et exécuter les notebooks dans l’ordre. Le jeton par défaut peut être changé dans `.env`, à partir de `.env.example`. Les ports publiés sont liés à l’interface de boucle locale.
+Depuis PowerShell, afficher le lien Jupyter du cluster démarré, puis l’ouvrir dans le navigateur.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\jupyter-url.ps1
+```
+
+Docker choisit par défaut un port hôte libre pour Jupyter. Le script affiche le port réellement publié et le jeton du serveur actif. Relancer le script après une recréation du conteneur. Pour fixer le port ou changer le jeton, renseigner `JUPYTER_PORT` ou `JUPYTER_TOKEN` dans `.env`, en prenant `.env.example` comme modèle, puis relancer Compose. Si tu utilises `-p` pour nommer le projet, définis le même nom dans `COMPOSE_PROJECT_NAME` avant d’exécuter le script.
+
+Depuis un autre terminal, `docker compose port jupyter 8888` affiche l’adresse hôte et `docker compose exec -T jupyter jupyter server list` affiche le jeton. Utiliser le port de la première commande dans l’URL du navigateur. Les ports publiés sont liés à l’interface de boucle locale.
+
+Si le navigateur affiche `ERR_CONNECTION_REFUSED`, relancer le script depuis le dossier du clone. Si Jupyter est arrêté ou en échec, vérifier `docker compose ps -a` et `docker compose logs --tail 50 jupyter`.
 
 | Notebook | Vérifications |
 | --- | --- |
